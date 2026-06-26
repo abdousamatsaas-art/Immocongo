@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Détail — Immocongo</title>
+  <meta name="description" content="Détails du bien immobilier — Immocongo" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .detail-page-title {
+      font-size: 26px;
+      font-weight: 900;
+      margin: 0 0 6px;
+      color: var(--text);
+      letter-spacing: -.02em;
+    }
+    .detail-header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .price-highlight {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--gold);
+      margin: 12px 0 4px;
+    }
+
+    /* ── Galerie ── */
+    .detail-gallery-wrapper {
+      background: var(--bg-dark);
+      border-radius: var(--radius) var(--radius) 0 0;
+      overflow: hidden;
+    }
+    .detail-gallery-main-img {
+      position: relative;
+      width: 100%;
+      height: 420px;
+      background: var(--bg-dark);
+    }
+    @media (max-width: 640px) { .detail-gallery-main-img { height: 240px } }
+
+    #detailMainImg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .gallery-ctrl {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(13,27,42,.60);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .18s;
+      z-index: 5;
+    }
+    .gallery-ctrl:hover { background: rgba(13,27,42,.88) }
+    .gallery-ctrl.prev { left: 14px }
+    .gallery-ctrl.next { right: 14px }
+    .gallery-ctrl.hidden { display: none }
+
+    .photo-counter-badge {
+      position: absolute;
+      bottom: 14px; right: 14px;
+      background: rgba(13,27,42,.60);
+      color: #fff;
+      font-size: 12px; font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+      z-index: 4;
+    }
+
+    /* ── Miniatures EN DEHORS de l'image principale ── */
+    .gallery-thumbs-row {
+      display: flex;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #f1f5f9;
+      overflow-x: auto;
+      border-radius: 0 0 var(--radius) var(--radius);
+      border: 1.5px solid var(--border);
+      border-top: none;
+      margin-bottom: 20px;
+    }
+    .gallery-thumbs-row::-webkit-scrollbar { height: 4px }
+    .gallery-thumbs-row::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 4px }
+
+    .g-thumb {
+      width: 80px; height: 58px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      opacity: .70;
+      object-fit: cover;
+      flex-shrink: 0;
+      transition: .18s ease;
+    }
+    .g-thumb:hover { opacity: .95 }
+    .g-thumb.active { border-color: var(--accent); opacity: 1 }
+
+    /* ── Panel infos ── */
+    .detail-info-panel {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .detail-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .detail-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 12px;
+      background: var(--accent-lt);
+      color: var(--accent-dk);
+      border: 1px solid rgba(16,185,129,.25);
+    }
+    .detail-pill.area {
+      background: var(--panel-2);
+      color: var(--muted);
+      border-color: var(--border);
+    }
+    .urgent-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 12px;
+      background: rgba(239,68,68,.10);
+      color: #dc2626;
+      border: 1px solid rgba(239,68,68,.25);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html#biens" aria-label="Retour à la liste">
+        <div class="brand-logo"><img src="image Immocongo.jpeg" alt="" /></div>
+      </a>
+      <div class="nav-right">
+        <a class="btn btn-outline" href="index.html#biens">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+          Retour
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="detail-wrap">
+    <div class="container">
+
+      <!-- Message erreur -->
+      <div id="detailTopMsg" class="fineprint" style="margin-bottom:12px; display:none"></div>
+
+      <!-- ── GALERIE ── -->
+      <div id="gallerySection">
+
+        <!-- Image principale SEULEMENT -->
+        <div class="detail-gallery-wrapper">
+          <div class="detail-gallery-main-img" id="mainImgWrap">
+
+            <div id="detailGalleryEmpty" class="gallery-empty" style="display:none">
+              <i class="fa-solid fa-image" style="font-size:48px; margin-bottom:10px; opacity:.4"></i>
+              <span>Aucune photo disponible</span>
+            </div>
+
+            <img id="detailMainImg" src="" alt="" style="display:none" />
+
+            <button class="gallery-ctrl prev hidden" id="galleryPrev" aria-label="Photo précédente">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="gallery-ctrl next hidden" id="galleryNext" aria-label="Photo suivante">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <div class="photo-counter-badge hidden" id="photoCounter">1 / 1</div>
+          </div>
+        </div>
+        <!-- FIN image principale -->
+
+        <!-- Miniatures EN DEHORS et EN DESSOUS de l'image principale -->
+        <div id="detailThumbs" class="gallery-thumbs-row" style="display:none"></div>
+
+      </div>
+      <!-- FIN galerie -->
+
+      <!-- ── PANEL INFOS ── -->
+      <div class="detail-info-panel">
+
+        <div class="detail-meta-row" id="detailMetaRow"></div>
+
+        <h1 class="detail-page-title" id="detailTitle"></h1>
+
+        <div class="price-highlight" id="detailPrice"></div>
+
+        <div class="facts-grid">
+          <div class="fact">
+            <b><i class="fa-solid fa-bed"></i> Chambres</b>
+            <span id="detailChambres">—</span>
+          </div>
+          <div class="fact">
+            <b><i class="fa-solid fa-bath"></i> Salles de bain</b>
+            <span id="detailSdb">—</span>
+          </div>
+          <div class="fact">
+            <b><i class="fa-solid fa-ruler-combined"></i> Surface</b>
+            <span id="detailSurface">—</span>
+          </div>
+          <div class="fact">
+            <b><i class="fa-solid fa-user-group"></i> Capacité</b>
+            <span id="detailCap">—</span>
+          </div>
+        </div>
+
+        <div style="margin-top:20px">
+          <h2 style="font-size:18px; font-weight:800; margin:0 0 10px">Description</h2>
+          <div class="detail-desc" id="detailDesc"></div>
+        </div>
+
+        <div class="actions-stack">
+          <a id="btnWhatsAppInfo" class="btn btn-whatsapp" href="#" target="_blank" rel="noopener">
+            <i class="fa-brands fa-whatsapp"></i>
+            Contacter via WhatsApp
+          </a>
+          <a id="btnWhatsAppVisit" class="btn btn-whatsapp" href="#" target="_blank" rel="noopener">
+            <i class="fa-solid fa-calendar-check"></i>
+            Demander une visite
+          </a>
+          <a class="btn btn-back" href="index.html#biens">
+            <i class="fa-solid fa-arrow-left"></i>
+            Retour à la liste
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const STORAGE_ANNOUNCEMENTS      = 'immocongo_announcements';
+      const STORAGE_SELECTED_ID        = 'immocongo_selected_property_id';
+      const STORAGE_SELECTED_PROPERTY  = 'immocongo_selected_property';
+
+      const qs = (s) => document.querySelector(s);
+
+      const readJSON = (key, fb) => {
+        try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : fb }
+        catch { return fb }
+      };
+
+      const formatXAF = (v) => {
+        const n = Number(String(v || '').replace(/[^0-9.]/g, ''));
+        if (!Number.isFinite(n)) return '';
+        try { return new Intl.NumberFormat('fr-FR').format(n) } catch { return String(n) }
+      };
+
+      const getProperty = () => {
+        const stored = localStorage.getItem(STORAGE_SELECTED_PROPERTY);
+        if (stored) { try { return JSON.parse(stored) } catch {} }
+
+        const id = localStorage.getItem(STORAGE_SELECTED_ID)
+                || new URLSearchParams(window.location.search).get('id')
+                || '';
+        if (id) {
+          const all = readJSON(STORAGE_ANNOUNCEMENTS, []);
+          return all.find((x) => String(x.id) === String(id)) || null;
+        }
+        return null;
+      };
+
+      const ann = getProperty();
+      if (!ann) {
+        const m = qs('#detailTopMsg');
+        m.style.display = 'block';
+        m.textContent = 'Bien introuvable.';
+        return;
+      }
+
+      /* ── Galerie ── */
+      const images = Array.isArray(ann.images) && ann.images.length ? ann.images : [];
+      const mainImg   = qs('#detailMainImg');
+      const emptyBox  = qs('#detailGalleryEmpty');
+      const thumbsRow = qs('#detailThumbs');
+      const prevBtn   = qs('#galleryPrev');
+      const nextBtn   = qs('#galleryNext');
+      const counter   = qs('#photoCounter');
+
+      let currentIdx = 0;
+
+      const goTo = (idx) => {
+        if (!images.length) return;
+        currentIdx = (idx + images.length) % images.length;
+        mainImg.src = images[currentIdx];
+        counter.textContent = `${currentIdx + 1} / ${images.length}`;
+        thumbsRow.querySelectorAll('.g-thumb').forEach((t, i) => {
+          t.classList.toggle('active', i === currentIdx);
+        });
+      };
+
+      if (images.length) {
+        mainImg.style.display = 'block';
+        emptyBox.style.display = 'none';
+
+        if (images.length > 1) {
+          prevBtn.classList.remove('hidden');
+          nextBtn.classList.remove('hidden');
+          counter.classList.remove('hidden');
+          thumbsRow.style.display = 'flex';
+
+          prevBtn.addEventListener('click', () => goTo(currentIdx - 1));
+          nextBtn.addEventListener('click', () => goTo(currentIdx + 1));
+
+          images.slice(0, 12).forEach((src, i) => {
+            const t = document.createElement('img');
+            t.src = src;
+            t.alt = `Photo ${i + 1}`;
+            t.className = 'g-thumb' + (i === 0 ? ' active' : '');
+            t.addEventListener('click', () => goTo(i));
+            thumbsRow.appendChild(t);
+          });
+        }
+
+        goTo(0);
+      } else {
+        emptyBox.style.display = 'flex';
+        mainImg.style.display = 'none';
+      }
+
+      /* ── Méta badges ── */
+      const metaRow = qs('#detailMetaRow');
+      const typeLabel = ann.type === 'location' ? 'Location' : 'Vente';
+
+      const makeEl = (html) => {
+        const d = document.createElement('div');
+        d.innerHTML = html;
+        return d.firstChild;
+      };
+
+      metaRow.appendChild(makeEl(
+        `<span class="detail-pill"><i class="fa-solid fa-tag"></i>${typeLabel}</span>`
+      ));
+      if (ann.area) {
+        metaRow.appendChild(makeEl(
+          `<span class="detail-pill area"><i class="fa-solid fa-location-dot"></i>${ann.area}</span>`
+        ));
+      }
+      if (ann.urgent === true) {
+        metaRow.appendChild(makeEl(
+          `<span class="urgent-pill"><i class="fa-solid fa-bolt"></i>URGENT</span>`
+        ));
+      }
+
+      /* ── Infos texte ── */
+      qs('#detailTitle').textContent    = ann.title || '—';
+      qs('#detailPrice').textContent    = ann.price ? `${formatXAF(ann.price)} XAF` : '';
+      qs('#detailChambres').textContent = ann.chambres     ?? '—';
+      qs('#detailSdb').textContent      = ann.sallesDeBain ?? '—';
+      qs('#detailSurface').textContent  = ann.surface ? `${ann.surface} m²` : '—';
+      qs('#detailCap').textContent      = ann.capacite     ?? '—';
+      qs('#detailDesc').textContent     = ann.description  || '';
+
+      /* ── WhatsApp ── */
+      const priceText = ann.price ? `${formatXAF(ann.price)} XAF` : '';
+      const baseMsg   = `Bonjour, je souhaite plus d'informations sur : ${ann.title || ''}. ${priceText}`.trim();
+      const visitMsg  = `Bonjour, je souhaite demander une visite pour : ${ann.title || ''}. (${ann.area || ''} — ${typeLabel})`;
+
+      const btnI = qs('#btnWhatsAppInfo');
+      const btnV = qs('#btnWhatsAppVisit');
+      if (btnI) btnI.href = `https://wa.me/242056145113?text=${encodeURIComponent(baseMsg)}`;
+      if (btnV) btnV.href = `https://wa.me/242056145113?text=${encodeURIComponent(visitMsg)}`;
+    })();
+  </script>
+</body>
+</html>
