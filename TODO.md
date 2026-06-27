@@ -1,7 +1,6 @@
-- [x] CORRECTION 2: admin.js — Auth (remove ADMIN_SESSION_KEY & PASSWORD, update isAuthed/setAuthed/loginForm handler)
-- [x] CORRECTION 3: admin.js — Annonces via API (add API const, renderAnnouncements async via API, update deleteAnnouncement + announcementForm submit)
-- [x] CORRECTION 4: admin.js — Messages via API (renderMessages async via API, deleteMsg uses API.messages.delete(msg.id))
-- [x] CORRECTION 5: admin.js — Supprimer références à STORAGE_ANNOUNCEMENTS & STORAGE_MESSAGES (garder STORAGE_FAVORIS)
-
-
+- [ ] Rechercher la cause du problème d’accès admin (mismatch mot de passe / ENV)
+- [ ] Mettre à jour netlify/functions/admin-login.ts pour corriger l’auth (option B: fallback sur immocongo2025)
+- [ ] Corriger le cookie Path (mettre Path=/) pour que le front le reçoive sur admin.html
+- [ ] Mettre à jour netlify/functions/admin-logout.ts avec le même Path
+- [ ] Vérifier en lançant un build / test local si possible
 

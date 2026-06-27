@@ -20,10 +20,17 @@ export const handler = async (event: any) => {
     }
 
     const secret = process.env[ADMIN_SECRET_ENV];
+    const fallbackPassword = 'immocongo2025';
+
     const body = event?.body ? JSON.parse(event.body) : {};
     const password = body?.password;
 
-    if (!secret || password !== secret) {
+    // Option B (corrigé pour que ça marche immédiatement si l’ENV n’est pas configurée)
+    const isAuthed = secret
+      ? password === secret
+      : password === fallbackPassword;
+
+    if (!isAuthed) {
       return respond(401, { message: 'Unauthorized' });
     }
 
@@ -31,7 +38,8 @@ export const handler = async (event: any) => {
       200,
       { ok: true },
       {
-        'set-cookie': `${COOKIE_NAME}=1; Path=/admin; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`,
+        // Path=/admin peut empêcher le navigateur de renvoyer le cookie sur admin.html.
+        'set-cookie': `${COOKIE_NAME}=1; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`,
       }
     );
   } catch (e: any) {

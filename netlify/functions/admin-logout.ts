@@ -5,10 +5,11 @@ export const handler = async () => {
     statusCode: 200,
     headers: {
       'content-type': 'application/json; charset=utf-8',
-      'set-cookie': `${COOKIE_NAME}=; Path=/admin; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
+      'set-cookie': `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
     },
     body: JSON.stringify({ ok: true }),
   };
 };
+
 
 
