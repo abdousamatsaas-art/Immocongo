@@ -43,7 +43,12 @@
   const normalizePrice = (v) => { const n = Number(String(v ?? '').replace(/[^0-9.]/g, '')); return Number.isFinite(n) ? n : 0; };
   const formatXAF      = (v) => { try { return new Intl.NumberFormat('fr-FR').format(normalizePrice(v)); } catch { return String(v); } };
 
-  /* ── Auth ── */
+  /* ── Auth ──
+     Le cookie 'immocongo_admin_auth' est HttpOnly (posé par admin-login.ts) :
+     c'est volontaire pour la sécurité, mais ça signifie que JS ne peut JAMAIS
+     le lire ni le modifier via document.cookie. On suit donc l'état d'auth
+     côté UI avec un simple flag en sessionStorage, mis à jour uniquement
+     par les réponses des fonctions admin-login / admin-logout. */
   const loginPanel   = qs('#loginPanel');
   const adminPanel   = qs('#adminPanel');
   const loginForm    = qs('#loginForm');
@@ -51,11 +56,9 @@
   const loginStatus  = qs('#loginStatus');
   const logoutBtn    = qs('#logoutBtn');
 
-  const isAuthed = () => document.cookie.split(';').some(c => c.trim().startsWith('immocongo_admin_auth='));
-  const setAuthed = (state) => {
-    if (!state) document.cookie = 'immocongo_admin_auth=; max-age=0; path=/';
-    renderAuth();
-  };
+  const UI_AUTH_KEY = 'immocongo_admin_ui_authed';
+
+  const isAuthed = () => sessionStorage.getItem(UI_AUTH_KEY) === '1';
 
   const renderAuth = () => {
     const authed = isAuthed();
@@ -64,6 +67,17 @@
     if (logoutBtn) logoutBtn.style.display = authed ? 'inline-flex' : 'none';
     if (!authed && adminPassword) adminPassword.value = '';
     if (authed) loadAll();
+  };
+
+  const setAuthed = async (state) => {
+    if (!state) {
+      // Le cookie HttpOnly ne peut être supprimé que par le serveur.
+      try { await fetch('/.netlify/functions/admin-logout', { method: 'POST' }); } catch {}
+      sessionStorage.removeItem(UI_AUTH_KEY);
+    } else {
+      sessionStorage.setItem(UI_AUTH_KEY, '1');
+    }
+    renderAuth();
   };
 
   loginForm?.addEventListener('submit', async (e) => {
@@ -77,7 +91,7 @@
       });
       if (!res.ok) throw new Error();
       if (loginStatus) { loginStatus.textContent = ''; }
-      renderAuth();
+      await setAuthed(true);
     } catch {
       if (loginStatus) { loginStatus.textContent = 'Mot de passe incorrect.'; loginStatus.style.color = 'rgba(255,120,120,.95)'; }
     }
@@ -613,4 +627,4 @@
   updatePhotosHidden();
   renderPhotosPreview();
   renderAuth();
-})(); 
+})();
