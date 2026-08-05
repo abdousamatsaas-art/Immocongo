@@ -42,11 +42,7 @@ export const handler = async (event: any) => {
     const id = String(body?.id || body?.createdAt || body?.ts || '');
     if (!id) return respond(400, { message: 'Missing id' });
 
-    const store = getStore({
-      name: STORE_NAME,
-      siteID: process.env.NETLIFY_SITE_ID,
-      token: process.env.NETLIFY_AUTH_TOKEN,
-    });
+    const store = getStore(STORE_NAME);
 
     const raw = await store.get(MSG_KEY);
     const rows = readMaybe<any[]>(raw ? raw.toString() : null, []);
@@ -59,4 +55,3 @@ export const handler = async (event: any) => {
     return respond(500, { message: String(e?.message || e) });
   }
 };
-

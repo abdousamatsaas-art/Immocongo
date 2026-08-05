@@ -38,11 +38,7 @@ export const handler = async (event: any) => {
   if (!cookieOk) return respond(401, { message: 'Unauthorized' });
 
   try {
-    const store = getStore({
-      name: STORE_NAME,
-      siteID: process.env.NETLIFY_SITE_ID,
-      token: process.env.NETLIFY_AUTH_TOKEN,
-    });
+    const store = getStore(STORE_NAME);
 
     const raw = await store.get(MSG_KEY);
     const rows = readMaybe<any[]>(raw ? raw.toString() : null, []);
@@ -54,4 +50,3 @@ export const handler = async (event: any) => {
     return respond(500, { message: String(e?.message || e) });
   }
 };
-
