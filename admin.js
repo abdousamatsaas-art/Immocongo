@@ -501,7 +501,7 @@
     });
 
     qsa('[data-action="deleteMsg"]', messagesList).forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const ts = btn.getAttribute('data-ts');
         if (!ts || !confirm('Supprimer ce message ?')) return;
         await API.messages.delete(String(ts));
