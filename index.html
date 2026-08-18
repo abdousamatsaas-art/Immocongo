@@ -207,20 +207,20 @@
         <div class="container">
           <div class="stats-grid">
             <div class="stat-card">
-              <div class="num counter" data-counter data-to="150">0</div>
-              <div class="label">150+ Biens disponibles</div>
+              <div class="num counter" data-counter data-key="properties" data-to="150">0</div>
+              <div class="label">150+ Biens disponibles <!-- Ajuster dans script.js (SITE_STATS.properties) --></div>
             </div>
             <div class="stat-card">
-              <div class="num counter" data-counter data-to="500">0</div>
-              <div class="label">500+ Clients satisfaits</div>
+              <div class="num counter" data-counter data-key="clients" data-to="500">0</div>
+              <div class="label">500+ Clients satisfaits <!-- Ajuster dans script.js (SITE_STATS.clients) --></div>
             </div>
             <div class="stat-card">
-              <div class="num counter" data-counter data-to="10">0</div>
-              <div class="label">10+ Années d’expérience</div>
+              <div class="num counter" data-counter data-key="years" data-to="10">0</div>
+              <div class="label">10+ Années d’expérience <!-- Ajuster dans script.js (SITE_STATS.years) --></div>
             </div>
             <div class="stat-card">
-              <div class="num counter" data-counter data-to="20">0</div>
-              <div class="label">20+ Quartiers couverts</div>
+              <div class="num counter" data-counter data-key="areas" data-to="20">0</div>
+              <div class="label">20+ Quartiers couverts <!-- Ajuster dans script.js (SITE_STATS.areas) --></div>
             </div>
           </div>
         </div>
@@ -283,6 +283,57 @@
       </div>
     </section>
 
+    <!-- TÉMOIGNAGES (ajouté) -->
+    <section class="testimonials-section" aria-label="Témoignages">
+      <div class="container">
+        <div class="section-title">
+          <h2>Témoignages</h2>
+          <p>Ils ont trouvé leur bien avec Immocongo</p>
+        </div>
+
+        <div class="testimonials-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-top:12px">
+          <!-- Témoignage 1 -->
+          <div class="testimonial-card" style="background:var(--panel); border:1px solid var(--border); padding:16px; border-radius:12px">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px">
+              <div style="width:46px; height:46px; border-radius:999px; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800">G</div>
+              <div>
+                <div style="font-weight:800">Grâce M.</div>
+                <div style="font-size:13px; color:var(--muted)">Bacongo</div>
+              </div>
+            </div>
+            <div style="color:var(--muted); margin-bottom:8px">★★★★★</div>
+            <div style="color:var(--text);">"J'ai trouvé mon appartement à Bacongo en moins d'une semaine grâce à Immocongo. L'équipe a été claire du début à la fin, sans mauvaise surprise."</div>
+          </div>
+
+          <!-- Témoignage 2 -->
+          <div class="testimonial-card" style="background:var(--panel); border:1px solid var(--border); padding:16px; border-radius:12px">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px">
+              <div style="width:46px; height:46px; border-radius:999px; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800">C</div>
+              <div>
+                <div style="font-weight:800">Christian N.</div>
+                <div style="font-size:13px; color:var(--muted)">Moungali</div>
+              </div>
+            </div>
+            <div style="color:var(--muted); margin-bottom:8px">★★★★★</div>
+            <div style="color:var(--text);">"Très bon suivi pour la location de ma maison à Moungali. Réponses rapides sur WhatsApp et visite organisée le jour même."</div>
+          </div>
+
+          <!-- Témoignage 3 -->
+          <div class="testimonial-card" style="background:var(--panel); border:1px solid var(--border); padding:16px; border-radius:12px">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px">
+              <div style="width:46px; height:46px; border-radius:999px; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800">S</div>
+              <div>
+                <div style="font-weight:800">Sylvie K.</div>
+                <div style="font-size:13px; color:var(--muted)">Poto-Poto</div>
+              </div>
+            </div>
+            <div style="color:var(--muted); margin-bottom:8px">★★★★☆</div>
+            <div style="color:var(--text);">"Service sérieux, bon accompagnement pour la vente de mon terrain. Je recommande pour ceux qui cherchent une agence fiable à Brazzaville."</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- SERVICES -->
     <section id="services" aria-label="Services">
       <div class="container">
@@ -328,18 +379,26 @@
               </div>
               <div class="contact-line">
                 <b><i class="fa-solid fa-phone" aria-hidden="true"></i> Téléphone</b>
-                <span>+242 06 000 0000</span>
+                <span>050797071</span> <!-- Remplacer par votre numéro final si besoin -->
               </div>
               <div class="contact-line">
                 <b><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email</b>
-                <span>contact@immocongo.com</span>
+                <span>abdousamatsaas@gmail.com</span> <!-- Remplacer par votre email final si besoin -->
               </div>
             </div>
           </div>
 
           <div class="contact-card">
             <h3>Envoyer un message</h3>
-            <form id="contactForm" autocomplete="on">
+              <!-- Envoi géré par la fonction Netlify `messages-create` (/.netlify/functions/messages-create).
+                   Basculement vers Netlify Forms : le formulaire ci‑dessous inclut maintenant `data-netlify="true"`.
+                   Après déploiement, activez les notifications e‑mail dans Netlify Dashboard → Forms pour recevoir les soumissions à abdousamatsaas@gmail.com. -->
+              <form id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" autocomplete="on">
+                <input type="hidden" name="form-name" value="contact" />
+                <input type="hidden" name="recipient" value="abdousamatsaas@gmail.com" />
+                <p style="display:none">
+                  <label>Ne pas remplir si vous êtes humain: <input name="bot-field" /></label>
+                </p>
               <div class="form-grid">
                 <div class="field">
                   <label for="name">Nom</label>
@@ -425,9 +484,13 @@
           <span style="color:var(--muted); font-weight:900; font-size:13px">Réseaux sociaux</span>
         </div>
         <div class="footer-social" aria-label="Réseaux sociaux">
+          <!-- LIEN FACEBOOK ICI -->
           <a href="#" onclick="return false" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <!-- LIEN INSTAGRAM ICI -->
           <a href="#" onclick="return false" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <!-- LIEN X/TWITTER ICI -->
           <a href="#" onclick="return false" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <!-- LIEN LINKEDIN ICI -->
           <a href="#" onclick="return false" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
       </div>
@@ -471,7 +534,7 @@
   </div>
 
   <!-- WhatsApp flottant -->
-  <a class="whatsapp-float" href="https://wa.me/242056145113" target="_blank" rel="noopener" aria-label="Contactez-nous sur WhatsApp" title="Contactez-nous sur WhatsApp">
+  <a class="whatsapp-float" href="https://wa.me/242050797071" target="_blank" rel="noopener" aria-label="Contactez-nous sur WhatsApp" title="Contactez-nous sur WhatsApp">
     <span class="pulse" aria-hidden="true">
       <i class="fa-brands fa-whatsapp" style="font-size:22px" aria-hidden="true"></i>
     </span>

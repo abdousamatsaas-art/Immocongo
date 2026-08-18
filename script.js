@@ -90,6 +90,23 @@
     onScroll();
   }
 
+  // Site statistics (configurable)
+  // Modifiez ces valeurs facilement ici : SITE_STATS.properties, .clients, .years, .areas
+  const SITE_STATS = {
+    properties: 150,
+    clients: 500,
+    years: 10,
+    areas: 20,
+  };
+
+  // Appliquer les valeurs configurables sur les compteurs (data-to)
+  qsa('[data-counter]').forEach((el) => {
+    const key = el.getAttribute('data-key');
+    if (key && SITE_STATS[key] !== undefined) {
+      el.setAttribute('data-to', String(SITE_STATS[key]));
+    }
+  });
+
   // Stats counters
   function animateCounter(el, to, durationMs = 1200) {
     const start = performance.now();
@@ -211,7 +228,7 @@
 
   function shareWhatsApp(titre, prix) {
     const text = encodeURIComponent(`${titre} — ${prix} XAF`);
-window.open(`https://wa.me/242056145113?text=${text}`, '_blank', 'noopener');
+window.open(`https://wa.me/242050797071?text=${text}`, '_blank', 'noopener');
   }
 
   // Modal tabs + gallery
@@ -432,7 +449,7 @@ window.open(`https://wa.me/242056145113?text=${text}`, '_blank', 'noopener');
     }
 
     const waText = encodeURIComponent(`Bonjour, je souhaite plus d’informations sur : ${ann.title || ''}. (${status.label} • ${ann.area || ''})`);
-if (modal.whatsappBtn) modal.whatsappBtn.href = `https://wa.me/242056145113?text=${waText}`;
+if (modal.whatsappBtn) modal.whatsappBtn.href = `https://wa.me/242050797071?text=${waText}`;
 
     // Favorites button in modal
     if (modal.favBtn) {
@@ -953,29 +970,66 @@ if (modal.whatsappBtn) modal.whatsappBtn.href = `https://wa.me/242056145113?text
         }
       }
 
+      // Helper: encoder FormData en application/x-www-form-urlencoded
+      const encodeFormData = (formData) => {
+        const pairs = [];
+        for (const [k, v] of formData.entries()) {
+          pairs.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(v)));
+        }
+        return pairs.join('&');
+      };
+
+      // 1) Envoyer vers la Netlify Function (existing)
+      const fnPayload = {
+        name: String(payload.name),
+        email: String(payload.email),
+        phone: String(payload.phone),
+        message: String(payload.message),
+        area: String(payload.area || ''),
+      };
+
+      let fnOk = false;
       try {
         const res = await fetch('/.netlify/functions/messages-create', {
           method: 'POST',
           headers: { 'content-type': 'application/json; charset=utf-8' },
-          body: JSON.stringify({
-            name: String(payload.name),
-            email: String(payload.email),
-            phone: String(payload.phone),
-            message: String(payload.message),
-            area: String(payload.area || ''),
-          }),
+          body: JSON.stringify(fnPayload),
         });
+        if (res.ok) fnOk = true;
+      } catch (err) {
+        fnOk = false;
+      }
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      // 2) Dupliquer vers Netlify Forms (AJAX POST to site root)
+      // Assure que le champ form-name est présent (ajouté dans HTML)
+      try {
+        const netlifyFormData = new FormData(contactForm);
+        // Ensure form-name present
+        if (!netlifyFormData.has('form-name')) netlifyFormData.append('form-name', contactForm.getAttribute('name') || 'contact');
 
+        const body = encodeFormData(netlifyFormData);
+        await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body,
+        });
+      } catch (err) {
+        // ignore Netlify Forms failure (best-effort)
+      }
+
+      // Finaliser l'UI selon le résultat de la fonction (ou en mode local)
+      if (fnOk) {
         if (contactStatus) {
           contactStatus.textContent = 'Message envoyé avec succès. Merci !';
           contactStatus.classList.remove('is-error');
           contactStatus.classList.add('is-success');
         }
         contactForm.reset();
-      } catch {
-        // Fallback local en cas d'offline/demo
+        return;
+      }
+
+      // Si function failed, enregistrer localement (fallback) mais Netlify Forms a déjà été tenté
+      try {
         const list = readJSON(STORAGE_MESSAGES, []);
         list.push({
           name: String(payload.name),
@@ -993,6 +1047,11 @@ if (modal.whatsappBtn) modal.whatsappBtn.href = `https://wa.me/242056145113?text
           contactStatus.classList.add('is-success');
         }
         contactForm.reset();
+      } catch (err) {
+        if (contactStatus) {
+          contactStatus.textContent = 'Erreur lors de l’envoi. Réessayez.';
+          contactStatus.classList.add('is-error');
+        }
       }
     });
   }
