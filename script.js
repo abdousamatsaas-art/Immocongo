@@ -93,10 +93,11 @@
   // Site statistics (configurable)
   // Modifiez ces valeurs facilement ici : SITE_STATS.properties, .clients, .years, .areas
   const SITE_STATS = {
-    properties: 150,
-    clients: 500,
-    years: 10,
-    areas: 20,
+    // Valeurs provisoires — modifiez ici selon vos chiffres réels
+    properties: 5,
+    clients: 120,
+    years: 3,
+    areas: 8,
   };
 
   // Appliquer les valeurs configurables sur les compteurs (data-to)

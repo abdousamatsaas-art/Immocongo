@@ -253,6 +253,25 @@ section { padding: 64px 0 }
 /* ── Barre de recherche hero ── */
 .hero-search { margin-bottom: 20px }
 
+/* Ajustement spécifique pour le hero search (bouton proportionné) */
+.hero-search .search-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.hero-search .search-row .input {
+  flex: 1;
+}
+.hero-search .btn-search {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
 .search-box {
   display: flex;
   align-items: center;
@@ -339,6 +358,16 @@ section { padding: 64px 0 }
   .hero-lead { font-size: 14px }
   .hero-actions { flex-direction: column }
   .hero-actions .btn { justify-content: center }
+}
+
+/* Formulaire contact mobile : 2 colonnes compactes + message full width */
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .form-grid .field { margin-bottom: 8px }
+  .form-grid .field.full { grid-column: 1 / -1 }
 }
 
 /* ============================================================
@@ -1151,6 +1180,11 @@ input::placeholder, textarea::placeholder { color: var(--muted); font-weight: 50
   border-radius: 16px;
   animation: whatsappPulse 1.8s ease-in-out infinite;
   display: flex; align-items: center; justify-content: center;
+}
+
+/* Éviter le chevauchement du footer / sections basses sur mobile */
+@media (max-width: 640px) {
+  .whatsapp-float { bottom: 92px; right: 18px }
 }
 
 /* ============================================================
